@@ -2,6 +2,7 @@ import os
 import json
 
 from ells import settings
+from ells.tools import Eventer
 
 from ells.models import db_session
 from ells.models.users import User
@@ -12,6 +13,7 @@ def run_app():
 
     settings.load_settings()
     db_session.global_init("database/database.db")
+    eventer = Eventer()
 
     from ells.web import app, socketio
     from ells.hardware import detect_device
@@ -19,7 +21,7 @@ def run_app():
     from ells.api import create_api
 
     detect_device()
-    start_bot()
+    bot = start_bot(eventer)
     create_api(app)
 
     socketio.run(app, "0.0.0.0", debug=True, use_reloader=False)

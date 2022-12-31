@@ -4,6 +4,7 @@ from serial.tools.list_ports import comports
 
 device = None
 
+
 def detect_device():
     global device
     ser = serial.Serial(baudrate=115200, timeout=0.5)

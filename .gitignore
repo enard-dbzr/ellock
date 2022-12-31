@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 .ftpconfig
+.vscode/
 database.db
 settings.json

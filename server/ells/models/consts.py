@@ -1,0 +1,3 @@
+NEW_ACCESS = 0
+OPEN = 1
+MESSAGE = 2
