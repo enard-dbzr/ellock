@@ -9,6 +9,7 @@ from flask_login import UserMixin
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
+    serialize_rules = ("-hashed_password", )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, unique=True)

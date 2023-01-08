@@ -18,7 +18,9 @@ bot = telebot.TeleBot(os.environ.get("ELL_TG_TOKEN"), threaded=True)
 
 open_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
 btn_open = types.KeyboardButton("Открыть")
+btn_image = types.KeyboardButton("Фото")
 open_markup.add(btn_open)
+open_markup.add(btn_image)
 
 keyboard_markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
 keyboard_markup.add(*([str(n) for n in range(1, 10)] + ["Отмена", "0"]),
@@ -31,7 +33,7 @@ crossquery_settings = {}
 
 
 @bot.message_handler(commands=["start", "help"])
-def start_handler(message):
+def start_handler(message: telebot.types.Message):
     bot.reply_to(message, "Начало",
                  reply_markup=open_markup)
 
@@ -97,13 +99,19 @@ def open_handler(message: telebot.types.Message):
                             reply_markup=open_markup)
 
 
+@bot.message_handler(func=lambda m: m.text.lower() == "фото")
+def image_handler(message: telebot.types.Message):
+    bot.send_chat_action(message.chat.id, "upload_photo")
+    return bot.send_photo(message.chat.id, hardware.get_image())
+
+
 @bot.message_handler(func=lambda m: m.text.lower() == "отмена")
-def cancel_handler(message):
+def cancel_handler(message: telebot.types.Message): 
     return bot.send_message(message.chat.id, "Ок",
                             reply_markup=open_markup)
 
 
-def confirm_step(message, key):
+def confirm_step(message: telebot.types.Message, key):
     db = db_session.create_session()
     user = db.query(User).filter_by(tg_id=message.from_user.id,
                                     is_known=True).first()

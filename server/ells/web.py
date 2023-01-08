@@ -35,7 +35,8 @@ def index():
 
     register_form = RegisterForm()
     if register_form.validate_on_submit():
-        user = User(username=register_form.username.data, is_admin=True, is_known=True)
+        user = User(username=register_form.username.data,
+                    is_admin=True, is_known=True)
         user.set_password(register_form.passwd.data)
 
         db.add(user)
@@ -46,7 +47,8 @@ def index():
 
     login_form = LoginForm()
     if login_form.validate_on_submit():
-        user = db.query(User).filter_by(username=login_form.username.data.lower(), is_admin=True).first()
+        user = db.query(User).filter_by(
+            username=login_form.username.data.lower(), is_admin=True).first()
         if user and user.check_password(login_form.passwd.data):
             login_user(user)
             return redirect("/")
@@ -58,19 +60,20 @@ def index():
     if not current_user.is_authenticated:
         return render_template("login.html", form=login_form)
 
-    users = []
-    for u in db.query(User).all():
-        if u.tg_id:
-            tg_u = bot.get_chat_member(u.tg_id, u.tg_id)
-            u_json = {}
-            u_json["id"] = u.tg_id
-            u_json["username"] = tg_u.user.username
-            u_json["first_name"] = tg_u.user.first_name
-            u_json["last_name"] = tg_u.user.last_name
-            u_json["is_known"] = u.is_known
-            users.append(u_json)
+    # users = []
+    # for u in db.query(User).all():
+    #     users.append(u.to_dict())
+        # if u.tg_id:
+        #     tg_u = bot.get_chat_member(u.tg_id, u.tg_id)
+        #     u_json = {}
+        #     u_json["id"] = u.tg_id
+        #     u_json["username"] = tg_u.user.username
+        #     u_json["first_name"] = tg_u.user.first_name
+        #     u_json["last_name"] = tg_u.user.last_name
+        #     u_json["is_known"] = u.is_known
+        #     users.append(u_json)
 
-    return render_template("index.html", users=users)
+    return render_template("index.html", users=db.query(User).all())
 
 
 @app.route("/logout")
@@ -107,6 +110,7 @@ def accept_tg(tg_id):
         db.commit()
 
     socketio.emit("refresh")
+
 
 @socketio.on("reject_tg")
 def accept_tg(tg_id):

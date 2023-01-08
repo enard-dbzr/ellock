@@ -1,8 +1,12 @@
 import serial
 from time import sleep
 from serial.tools.list_ports import comports
+import cv2
+import io
 
 device = None
+cap = cv2.VideoCapture(1)
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 
 def detect_device():
@@ -27,3 +31,11 @@ def detect_device():
 def open():
     device.write(b"open\n")
     return True
+
+
+def get_image():
+    cap.read()
+    success, img = cap.read()
+    cv2.imwrite("test.jpg", img)
+    success, buffer = cv2.imencode(".jpg", img)
+    return io.BytesIO(buffer)

@@ -3,28 +3,46 @@
 {% block content %}
 <div class="container-lg">
     <div class="row">
+        {% for user in users %}
+        <form action="/set/{{ user.id }}" id="form-{{ user.id }}" method="get"></form>
+        {% endfor %}
         <table class="table">
             <thead>
                 <tr>
                     <th scope="col">id</th>
                     <th scope="col">Username</th>
-                    <th scope="col">First name</th>
-                    <th scope="col">Last name</th>
+                    <th scope="col">Display name</th>
+                    <th scope="col">Telegram</th>
                     <th scope="col">Access</th>
+                    <th scope="col">Is admin</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in users %}
                 <tr>
-                    <th>{{ user["id"] }}</th>
-                    <td>@{{ user["username"] }}</td>
-                    <td>{{ user["first_name"] }}</td>
-                    <td>{{ user["last_name"] }}</td>
+                    <th>{{ user.id }}</th>
+                    <td><label>{{ user.username }}</label></td>
                     <td>
-                        {% if user["is_known"] %}
-                            <button class="btn btn-danger reject_tg" id="tg_{{ user["id"] }}">Reject</button>
+                        <input class="form-control" type="text" name="display_name" form="form-{{ user.id }}"
+                            value="{{ user.display_name }}">
+                    </td>
+                    <td>{{ user.tg_id }}</td>
+                    <td>
+                        {% if user.is_known %}
+
+                        <input class="form-check-input" type="checkbox" name="is_known" form="form-{{ user.id }}"
+                            checked>
                         {% else %}
-                            <button class="btn btn-success accept_tg" id="tg_{{ user["id"] }}">Accept</button>
+                        <input class="form-check-input" type="checkbox" name="is_known" form="form-{{ user.id }}">
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if user.is_admin %}
+                        <input class="form-check-input" type="checkbox" name="is_admin" form="form-{{ user.id }}"
+                            checked>
+                        {% else %}
+                        <input class="form-check-input" type="checkbox" name="is_admin" form="form-{{ user.id }}">
                         {% endif %}
                     </td>
                 </tr>
